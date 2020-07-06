@@ -15,6 +15,14 @@ app.get('/urls', (req,res) => {
   res.render('urls_index', templateVars);
 });
 
+app.get('/urls/:shortURL', (req,res) => {
+  for (let url in urlDatabase) {
+    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[url] };
+  res.render('urls_show', templateVars);
+  }
+  
+});
+
 
 
 //index page
