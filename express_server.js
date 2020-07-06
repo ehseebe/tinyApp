@@ -10,20 +10,20 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+//URLS
 app.get('/urls', (req,res) => {
-  let templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase };
   res.render('urls_index', templateVars);
 });
 
+//SHORT URLS
 app.get('/urls/:shortURL', (req,res) => {
-  for (let url in urlDatabase) {
-    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[url] };
+  const shortURL = req.params.shortURL;
+  const templateVars = {
+    shortURL,
+    longURL: urlDatabase[shortURL]};
   res.render('urls_show', templateVars);
-  }
-  
 });
-
-
 
 //index page
 app.get('/', (req, res) => {
@@ -31,8 +31,8 @@ app.get('/', (req, res) => {
     { name: 'Bloody Mary', drunkness: 3 },
     { name: 'Martini', drunkness: 5 },
     { name: 'Scotch', drunkness: 10 }
-];
-const tagline = "Any code of your own that you haven't looked at for six or more months might as well have been written by someone else.";
+  ];
+  const tagline = "Any code of your own that you haven't looked at for six or more months might as well have been written by someone else.";
 
   res.render('pages/index', {
     drinks,
