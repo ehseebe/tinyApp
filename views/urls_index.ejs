@@ -20,9 +20,9 @@
       </thead>
       <tbody>
         <ul>
-        <% urlDatabase.forEach(function(url) { %>
-            <li><%= url[0] %> - <% url[1] %></li>
-        <% }); %>
+        <% for (let url in urls) { %>
+            <li><%= url %> - <%= urls[url] %></li>
+        <% }; %>
       </ul>
       </tbody>
     </table>
