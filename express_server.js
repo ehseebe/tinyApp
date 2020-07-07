@@ -28,36 +28,43 @@ app.get('/urls/new', (req,res) => {
   res.render('urls_new');
 });
 
-//ACTUAL FORM
+//SAVE NEW URLS + REDIRECT
 app.post('/urls', (req, res) => {
   console.log(req.body); //log the post to the body
-  //input longURL
-  //generate shortURL
-  //output and save shortURL and longURL
-  const shortURL = generateRandomString(req.params.shortURL);
-  const longURL = urlDatabase[shortURL];
-  //create a new function here?
-  const createNewURL = (longURL) => {
-    const createNewURL = {
-      shortURL,
-      longURL
-    };
-  };
-  createNewURL();
 
-  res.redirect(`/urls/:${shortURL}`); //need to redirect to /urls/
+  const shortURL = generateRandomString();
+  const longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL;
+
+  res.redirect(`/urls/${shortURL}`); //need to redirect to /urls/
 });
 
 //SHORT URLS
 app.get('/urls/:shortURL', (req,res) => {
-  const shortURL = generateRandomString(req.params.shortURL);
-  const templateVars = {
-    shortURL,
-    longURL: urlDatabase[shortURL]};
-  res.render('urls_show', templateVars);
+  const shortURL = req.params.shortURL;
+  
+    console.log("shortURL:", req.params.shortURL)
+    console.log("longURL:", urlDatabase[shortURL])
+    console.log("urlDatabase:", urlDatabase)
+  
+//if the shortURL exists, render
+//if shortURL is not in urlDatabase, redirect to /urls
+//undefined
+  if (urlDatabase[shortURL]) { //will check in the database, if it exists, we render the page as normal
+    const templateVars = {
+      shortURL,
+      longURL: urlDatabase[shortURL]
+    };
+    res.render('urls_show', templateVars);
+  } else { //if it doesn't, it comes back as undefined === falsy, and we want to redirect to main page
+    res.redirect('/urls');
+  }
 });
 
+//redirects to LONG URL
 app.get('/u/:shortURL', (req, res) => {
+  console.log(req.body)
+  const longURL = req.body.longURL;
   res.redirect(longURL);
 });
 
