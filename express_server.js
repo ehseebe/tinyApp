@@ -43,13 +43,13 @@ app.post('/urls', (req, res) => {
 app.get('/urls/:shortURL', (req,res) => {
   const shortURL = req.params.shortURL;
   
-    console.log("shortURL:", req.params.shortURL)
-    console.log("longURL:", urlDatabase[shortURL])
-    console.log("urlDatabase:", urlDatabase)
+  console.log("shortURL:", req.params.shortURL);
+  console.log("longURL:", urlDatabase[shortURL]);
+  console.log("urlDatabase:", urlDatabase);
   
-//if the shortURL exists, render
-//if shortURL is not in urlDatabase, redirect to /urls
-//undefined
+  //if the shortURL exists, render
+  //if shortURL is not in urlDatabase, redirect to /urls
+  //undefined
   if (urlDatabase[shortURL]) { //will check in the database, if it exists, we render the page as normal
     const templateVars = {
       shortURL,
@@ -65,9 +65,9 @@ app.get('/urls/:shortURL', (req,res) => {
 app.post('/urls/:shortURL', (req, res) => {
   const longURL = req.body.longURL;
   const shortURL = req.params.shortURL;
-  console.log("shortURL:", shortURL)
+  console.log("shortURL:", shortURL);
   urlDatabase[shortURL] = longURL;
-  console.log("urlDatabase:", urlDatabase)
+  console.log("urlDatabase:", urlDatabase);
   res.redirect('/urls');
 });
 
