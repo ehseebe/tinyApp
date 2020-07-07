@@ -15,7 +15,7 @@ const urlDatabase = {
 //Random string generator
 const generateRandomString = function() {
   return Math.random().toString(36).substring(2,8);
-}
+};
 
 //URLS
 app.get('/urls', (req,res) => {
@@ -30,39 +30,36 @@ app.get('/urls/new', (req,res) => {
 
 //ACTUAL FORM
 app.post('/urls', (req, res) => {
-  console.log(req.body); //log the post request to the body console
-  res.send('Ok'); //respond with 'ok'
-})
+  console.log(req.body); //log the post to the body
+  //input longURL
+  //generate shortURL
+  //output and save shortURL and longURL
+  const shortURL = generateRandomString(req.params.shortURL);
+  const longURL = urlDatabase[shortURL];
+  //create a new function here?
+  const createNewURL = (longURL) => {
+    const createNewURL = {
+      shortURL,
+      longURL
+    };
+  };
+  createNewURL();
+
+  res.redirect(`/urls/:${shortURL}`); //need to redirect to /urls/
+});
 
 //SHORT URLS
 app.get('/urls/:shortURL', (req,res) => {
-  const shortURL = req.params.shortURL;
+  const shortURL = generateRandomString(req.params.shortURL);
   const templateVars = {
     shortURL,
     longURL: urlDatabase[shortURL]};
   res.render('urls_show', templateVars);
 });
 
-//index page - DELETE
-app.get('/', (req, res) => {
-  const drinks = [
-    { name: 'Bloody Mary', drunkness: 3 },
-    { name: 'Martini', drunkness: 5 },
-    { name: 'Scotch', drunkness: 10 }
-  ];
-  const tagline = "Any code of your own that you haven't looked at for six or more months might as well have been written by someone else.";
-
-  res.render('pages/index', {
-    drinks,
-    tagline
-  });
+app.get('/u/:shortURL', (req, res) => {
+  res.redirect(longURL);
 });
-
-//about page - DELETE
-app.get('/about', (req,res) => {
-  res.render('pages/about');
-});
-
 
 
 //server signal
