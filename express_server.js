@@ -61,16 +61,29 @@ app.get('/urls/:shortURL', (req,res) => {
   }
 });
 
+//EDIT
+app.post('/urls/:shortURL', (req, res) => {
+  const longURL = req.body.longURL;
+  const shortURL = req.params.shortURL;
+  console.log("shortURL:", shortURL)
+  urlDatabase[shortURL] = longURL;
+  console.log("urlDatabase:", urlDatabase)
+  res.redirect('/urls');
+});
+
 //redirects to LONG URL
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
 
+
 app.post('/urls/:shortURL/delete', (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect('/urls');
-})
+});
+
+
 
 
 //server signal
