@@ -29,6 +29,19 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
+//LOGOUT
+app.post('/logout', (req, res) => {
+  const username = req.body.userName; //how its identified in ejs
+  res.cookie('username', username);
+  res.clearCookie('username');
+  for (let urls in urlDatabase) {
+    delete urlDatabase[urls];
+  };
+  //delete urlDatabase[req.params.shortURL];
+  res.redirect('/urls');
+})
+
+
 //URLS
 app.get('/urls', (req,res) => {
   const templateVars = { 
