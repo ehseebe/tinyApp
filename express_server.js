@@ -55,18 +55,30 @@ const addNewUser = (name, email, password) => {
   return userId;
 };
 
+const authenticateUser = (email, password) => {
+  //check if user exists
+  const user = findUserByEmail(email);
+
+  //check that email and pass match
+  if (user && user.password === password) {
+    return user.id;
+  } else {
+    return false;
+  }
+};
+
 const generateRandomString = function() {
   return Math.random().toString(36).substring(2,8);
 };
 
-//LOGIN
-app.post('/login', (req, res) => {
-  //set a cookie named usersame to the value submitted in req.body
-  //redirect to urls
-  const userId = req.body.user_id; //how its identified in ejs
-  res.cookie('user_id', userId);
-  res.redirect('/urls');
-});
+// //LOGIN
+// app.post('/login', (req, res) => {
+//   //set a cookie named usersame to the value submitted in req.body
+//   //redirect to urls
+//   const userId = req.body.user_id; //how its identified in ejs
+//   res.cookie('user_id', userId);
+//   res.redirect('/urls');
+// });
 
 //VIEW LOGIN PAGE
 app.get('/login', (req, res) => {
@@ -81,11 +93,22 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const {name, email, password } = req.body;
   const user = findUserByEmail(email);
-
   const userId = req.cookies.user_id;
+  //check user email, password
+  if (!user) {
+    //if user doesn't exist
+    res.status(403).send('Error: user not found.');
+  } else if (user !== password) {
+    res.status(403).send('Error: user not found.');
+  } else {
+    res.cookie('user_id', userId);
+    res.redirect('/urls');
+  }
+
   const templateVars = {
-    user: users[userId]//change to null?
+    user: users[userId]
   };
+
   res.render('urls_login', templateVars);
 
 });
