@@ -162,11 +162,16 @@ app.get('/urls', (req,res) => {
 
 //NEW URLS - FORM
 app.get('/urls/new', (req,res) => {
+  //check if user is logged in, else redirect to login
   const userId = req.cookies.user_id;
-  const templateVars = {
-    user: users[userId],
-  };
-  res.render('urls_new', templateVars);
+  if (userId) {
+    const templateVars = {
+      user: users[userId],
+    };
+    res.render('urls_new', templateVars);
+  } else {
+    res.redirect('/login');
+  }
 });
 
 //SAVE NEW URLS + REDIRECT
