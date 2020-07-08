@@ -91,25 +91,20 @@ app.get('/login', (req, res) => {
 
 //LOGIN PAGE
 app.post('/login', (req, res) => {
-  const {name, email, password } = req.body;
-  const user = findUserByEmail(email);
-  const userId = req.cookies.user_id;
-  //check user email, password
-  if (!user) {
-    //if user doesn't exist
-    res.status(403).send('Error: user not found.');
-  } else if (user !== password) {
-    res.status(403).send('Error: user not found.');
-  } else {
+  //check the input
+  const { email, password } = req.body;
+  //check user email, password 
+  const userId = authenticateUser(email, password);
+  
+  if (userId) {
     res.cookie('user_id', userId);
     res.redirect('/urls');
+  } else {
+    //if user doesn't exist
+    res.status(403).send('Error: your email/password was not found.');
   }
 
-  const templateVars = {
-    user: users[userId]
-  };
-
-  res.render('urls_login', templateVars);
+  //res.render('urls_login', templateVars);
 
 });
 
@@ -144,12 +139,12 @@ app.post('/register', (req,res) => {
 
 //LOGOUT
 app.post('/logout', (req, res) => {
-  const userId = req.body.user_id; //how its identified in ejs
-  res.cookie('user_id', userId);
+  // const userId = req.body.user_id; //how its identified in ejs
+  // res.cookie('user_id', userId);
   res.clearCookie('user_id');
-  for (let urls in urlDatabase) {
-    delete urlDatabase[urls];
-  }
+  // for (let urls in urlDatabase) {
+  //   delete urlDatabase[urls];
+  // }
   res.redirect('/urls');
 });
 
