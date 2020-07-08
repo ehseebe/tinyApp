@@ -29,6 +29,14 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
+//REGISTER NEW USER
+app.get('/register', (req, res) => {
+  const templateVars = { 
+    username: req.cookies["username"],
+  };
+  res.render('urls_register', templateVars);
+});
+
 //LOGOUT
 app.post('/logout', (req, res) => {
   const username = req.body.userName; //how its identified in ejs
