@@ -10,11 +10,11 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 
 const users = {
-  "userRandomID": {
-    id: "userRandomID",
+  "fw02i8": {
+    id: "fw02i8",
     name: "name",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: "purple"
   },
   "user2RandomID": {
     id: "user2RandomID",
@@ -24,9 +24,14 @@ const users = {
   }
 };
 
+// const urlDatabase = {
+//   "b2xVn2": "http://www.lighthouselabs.ca",
+//   "9sm5xK": "http://www.google.com"
+// };
+
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "fw02i8" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "fw02i8" }
 };
 
 const findUserByEmail = (email) => {
@@ -69,6 +74,22 @@ const authenticateUser = (email, password) => {
 
 const generateRandomString = function() {
   return Math.random().toString(36).substring(2,8);
+};
+
+const findURLByUser = (userId) => {
+  const currentUser = userId;
+  let userURLs = {};
+  for (let urls in urlDatabase) {
+    console.log("userID:", urlDatabase[urls]['userID'])
+    console.log("currentuser:", currentUser)
+    if (urlDatabase[urls]['userID'] === currentUser) {
+      console.log("hello")
+      
+      userURLs.shortURL = urls; 
+      userURLs.longURL = urlDatabase[urls].longURL;
+    } 
+  }
+  return userURLs;
 };
 
 // //LOGIN
@@ -152,11 +173,20 @@ app.post('/logout', (req, res) => {
 //URLS
 app.get('/urls', (req,res) => {
   const userId = req.cookies.user_id;
-  const templateVars = {
-    user: users[userId],
-    urls: urlDatabase
-  };
-  res.render('urls_index', templateVars);
+//filter through urls OK
+//loop over urlDatabase, for in loop OK
+//check user_id against userID in db OK
+//if match, url database shows matching short/long urls 
+//need to store them! object, same, but correct ID
+  if(!userId) {
+    res.redirect('/login');
+  } else {
+    const templateVars = {
+      user: users[userId],
+      urls: findURLByUser(userId) //here we pass in filtered value
+    };
+    res.render('urls_index', templateVars);
+  }
 });
 
 
@@ -224,10 +254,9 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 });
 
-
-
-
 //server signal
 app.listen(PORT, () => {
   console.log(`${PORT} is the magic port`);
 });
+
+
