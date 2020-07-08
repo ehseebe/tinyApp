@@ -11,39 +11,31 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
         <a class="nav-item nav-link" href="/register">Sign Up</a>
+        <a class="nav-item nav-link" href="/login">Login</a>
       </div>
     </div>
         
-<% if (username) { %>
+<% if (user) { %>
 
   <form class="form-inline" action="/logout" method="POST">
         
         <div class="pull-left" style="margin-right:15px">
-          Logged In As: <%= username %> 
+          Logged In As: <%= user.email %> 
         </div>
         <button type="submit" class="btn btn-dark my-2 my-sm-0">Logout</button>
   </form>
+
 <% } else { %>
 
-  <!-- <form class="form-inline" method="POST" action="/login"></form>
-    <div class="input-group mr-sm-2">
-      <div class="input-group-prepend">
-        <div class="input-group-text">@</div>
-      </div>
-      <input name="userName" type="text" class="form-control" id="inlineFormInputGroupUsername2" placeholder="Username">
-      <button type="submit" class="btn btn-light my-2 my-sm-0">Submit</button>
-    </div> -->
-
-
-  <form class="form-inline" action="/login" method="POST">
+  <!-- <form class="form-inline" action="/login" method="POST">
     <div class="form-row align-items-">
         <label class="sr-only" for="inlineFormInputGroupUsername">Username</label>
         <div class="input-group">
-          <input type="text" class="form-control mr-sm-2" name="userName" id="inlineFormInputGroupUsername" placeholder="Username">
+          <input type="text" class="form-control mr-sm-2" name="user_id" id="inlineFormInputGroupUsername" placeholder="Username">
       </div>
         <button type="submit" class="btn btn-light my-2 my-sm-0">Submit</button>
     </div>
-  </form>
+  </form> -->
 <% } %>
 
 
