@@ -9,12 +9,50 @@ app.use(cookieParser());
 //set view engine to ejs
 app.set('view engine', 'ejs');
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+};
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
-//Random string generator
+const findUserByEmail = (email) => {
+  //we have an email, need to check if exists
+  for (let userId in users) {
+    if (users[userId].email === email) {
+      return users[userId];
+    }
+  }
+  return false;
+};
+
+const addNewUser = (name, email, password) => {
+  //generate userId
+  const userId = generateRandomString();
+  //new user object
+  const newUser = {
+    id: userId,
+    name,
+    email,
+    password
+  };
+
+  users[userId] = newUser;
+
+  return userId;
+};
+
 const generateRandomString = function() {
   return Math.random().toString(36).substring(2,8);
 };
@@ -29,12 +67,34 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
-//REGISTER NEW USER
+//VIEW REGISTER PAGE
 app.get('/register', (req, res) => {
   const templateVars = { 
-    username: req.cookies["username"],
+    username: req.cookies["username"],//change to null?
   };
   res.render('urls_register', templateVars);
+});
+
+//REGISTER NEW USER
+app.post('/register', (req,res) => {
+  const {name, email, password } = req.body;
+
+  //check if user exists in db
+  //if user is found, we assign cookies
+  //if not we redirect
+
+  const user = findUserByEmail(email); //CREATE THIS FUNC
+
+  if (!user) {
+    //add user id
+    const userId = addNewUser(name, email, password); //CREATE FUNC
+    //assign cookie
+    res.cookie('user_id', userId);
+    res.redirect('/urls');
+  } else {
+    res.status(401).send('Error: try a different email');
+  }
+
 });
 
 //LOGOUT
