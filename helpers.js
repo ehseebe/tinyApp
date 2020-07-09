@@ -11,7 +11,7 @@ const findUserByEmail = (email, database) => {
       return database[userId];
     }
   }
-  return false;
+  return null;
 };
 
 
@@ -58,6 +58,7 @@ const findURLByUser = (userId, database) => {
       userURLs[urls] = database[urls].longURL;
     }
   }
+  console.log("WHAT IS THIS!!!!!!!!!!!!", userURLs);
   return userURLs;
 };
 
