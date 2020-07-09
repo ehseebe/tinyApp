@@ -81,6 +81,8 @@ const findURLByUser = (userId) => {
   const currentUser = userId;
   let userURLs = {};
   for (let urls in urlDatabase) {
+    console.log("users:", users)
+    console.log('urlDatabase:', urlDatabase)
     console.log("userID:", urlDatabase[urls]['userID'])
     console.log("currentuser:", currentUser)
     if (urlDatabase[urls]['userID'] === currentUser) {
@@ -170,7 +172,7 @@ app.post('/logout', (req, res) => {
 
 //MY URLS
 app.get('/urls', (req,res) => {
-  const userId = req.cookies.user_id;
+  const userId = req.cookies['user_id'];
   if(!userId) {
     res.redirect('/login');
   } else {
@@ -187,7 +189,7 @@ app.get('/urls', (req,res) => {
 //NEW URLS - FORM
 app.get('/urls/new', (req,res) => {
   //check if user is logged in, else redirect to login
-  const userId = req.cookies.user_id;
+  const userId = req.cookies['user_id']
   if (userId) {
     const templateVars = {
       user: users[userId],
@@ -200,20 +202,18 @@ app.get('/urls/new', (req,res) => {
 
 //SAVE NEW URLS + REDIRECT
 app.post('/urls', (req, res) => {
-  console.log(req.body); //log the post to the body
-
-  // i3BoGr: { longURL: "https://www.google.ca", userID: "fw02i8" }
-
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = { longURL: req.body.longURL, userID : req.cookies.user_id };
-
+  urlDatabase[shortURL] = { 
+    longURL: req.body.longURL, 
+    userID : req.cookies.user_id 
+  };
   res.redirect(`/urls/${shortURL}`); //need to redirect to /urls/
 });
 
 //SHORT URLS
 app.get('/urls/:shortURL', (req,res) => {
   const shortURL = req.params.shortURL;
-  const userId = req.cookies.user_id;
+  const userId = req.cookies['user_id'];
   
   if (urlDatabase[shortURL]) { //will check in the database, if it exists, we render the page as normal
     const templateVars = {
@@ -229,12 +229,19 @@ app.get('/urls/:shortURL', (req,res) => {
 
 //EDIT URL
 app.post('/urls/:shortURL', (req, res) => {
-  const longURL = req.body.longURL;
-  const shortURL = req.params.shortURL;
-  console.log("shortURL:", shortURL);
-  urlDatabase[shortURL] = longURL;
+  const userId = req.cookies['user_id'];
+  
+  if(!userId) {
+    res.redirect('/login');
+  } else {
+    const longURL = req.body.longURL;
+    const shortURL = req.params.shortURL;
+    //console.log("shortURL:", shortURL);
+    urlDatabase[shortURL].longURL = longURL
+    res.redirect('/urls')
+  }
+
   console.log("urlDatabase:", urlDatabase);
-  res.redirect('/urls');
 });
 
 //redirects to LONG URL
@@ -242,16 +249,20 @@ app.get('/u/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const entry = urlDatabase[shortURL];
   if (entry) {
-    res.redirect(entry.longURL); //http needed!!! show error if http not included
+    res.redirect(entry.longURL); //http needed!!! show error if http not
   } else {
     res.status(404).send('Error: url not found.')
-  }
-  
+  } 
 });
 
 //DELETE URL
 app.post('/urls/:shortURL/delete', (req, res) => {
+  const userId = req.cookies['user_id'];
+  if(!userId) {
+    res.redirect('/login');
+  } else {
   delete urlDatabase[req.params.shortURL];
+  }
   res.redirect('/urls');
 });
 
