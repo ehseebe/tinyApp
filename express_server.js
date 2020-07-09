@@ -76,6 +76,7 @@ const generateRandomString = function() {
   return Math.random().toString(36).substring(2,8);
 };
 
+
 const findURLByUser = (userId) => {
   const currentUser = userId;
   let userURLs = {};
@@ -83,10 +84,7 @@ const findURLByUser = (userId) => {
     console.log("userID:", urlDatabase[urls]['userID'])
     console.log("currentuser:", currentUser)
     if (urlDatabase[urls]['userID'] === currentUser) {
-      console.log("hello")
-      
-      userURLs.shortURL = urls; 
-      userURLs.longURL = urlDatabase[urls].longURL;
+      userURLs[urls] = urlDatabase[urls].longURL;
     } 
   }
   return userURLs;
@@ -170,17 +168,13 @@ app.post('/logout', (req, res) => {
 });
 
 
-//URLS
+//MY URLS
 app.get('/urls', (req,res) => {
   const userId = req.cookies.user_id;
-//filter through urls OK
-//loop over urlDatabase, for in loop OK
-//check user_id against userID in db OK
-//if match, url database shows matching short/long urls 
-//need to store them! object, same, but correct ID
   if(!userId) {
     res.redirect('/login');
   } else {
+  console.log("userdb:", urlDatabase);
     const templateVars = {
       user: users[userId],
       urls: findURLByUser(userId) //here we pass in filtered value
@@ -208,9 +202,10 @@ app.get('/urls/new', (req,res) => {
 app.post('/urls', (req, res) => {
   console.log(req.body); //log the post to the body
 
+  // i3BoGr: { longURL: "https://www.google.ca", userID: "fw02i8" }
+
   const shortURL = generateRandomString();
-  const longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = { longURL: req.body.longURL, userID : req.cookies.user_id };
 
   res.redirect(`/urls/${shortURL}`); //need to redirect to /urls/
 });
@@ -224,7 +219,7 @@ app.get('/urls/:shortURL', (req,res) => {
     const templateVars = {
       user: users[userId],
       shortURL,
-      longURL: urlDatabase[shortURL]
+      longURL: urlDatabase[shortURL].longURL
     };
     res.render('urls_show', templateVars);
   } else { //if it doesn't, it comes back as undefined === falsy, and we want to redirect to main page
@@ -244,8 +239,14 @@ app.post('/urls/:shortURL', (req, res) => {
 
 //redirects to LONG URL
 app.get('/u/:shortURL', (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
+  const shortURL = req.params.shortURL;
+  const entry = urlDatabase[shortURL];
+  if (entry) {
+    res.redirect(entry.longURL); //http needed!!! show error if http not included
+  } else {
+    res.status(404).send('Error: url not found.')
+  }
+  
 });
 
 //DELETE URL
