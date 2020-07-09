@@ -77,10 +77,10 @@ const findURLByUser = (userId) => {
   const currentUser = userId;
   let userURLs = {};
   for (let urls in urlDatabase) {
-    console.log("users:", users);
-    console.log('urlDatabase:', urlDatabase);
-    console.log("userID:", urlDatabase[urls]['userID']);
-    console.log("currentuser:", currentUser);
+    // console.log("users:", users);
+    // console.log('urlDatabase:', urlDatabase);
+    // console.log("userID:", urlDatabase[urls]['userID']);
+    // console.log("currentuser:", currentUser);
     if (urlDatabase[urls]['userID'] === currentUser) {
       userURLs[urls] = urlDatabase[urls].longURL;
     }
@@ -112,8 +112,18 @@ app.post('/login', (req, res) => {
     res.redirect('/urls');
   } else {
     //if user doesn't exist
-    res.status(403).send('Error: your email/password was not found.');
+    res.status(403).redirect('/urls_error_403')
   }
+});
+
+
+//ERROR 403 VIEW
+app.get('/urls_error_403', (req, res) => {
+  const userId = req.cookies.user_id;
+  const templateVars = {
+    user: users[userId]//change to null?
+  };
+  res.render('urls_error_403', templateVars);
 });
 
 
@@ -133,7 +143,7 @@ app.post('/register', (req,res) => {
   const user = findUserByEmail(email);
   
   if (email.length === 0 && password.length === 0) {
-    res.status(411).send('Error: please fill out the required fields to register to TinyApp.');
+    res.status(411).redirect('/urls_error_411');
   } else if (!user) {
     //add user id
     const userId = addNewUser(name, email, password);
@@ -142,9 +152,28 @@ app.post('/register', (req,res) => {
     console.log(users);
     res.redirect('/urls');
   } else {
-    res.status(401).send('Error: try a different email to register to TinyApp.');
+    res.status(401).redirect('/urls_error_401');
   }
+});
 
+
+//ERROR 411 VIEW
+app.get('/urls_error_411', (req, res) => {
+  const userId = req.cookies.user_id;
+  const templateVars = {
+    user: users[userId]//change to null?
+  };
+  res.render('urls_error_411', templateVars);
+});
+
+
+//ERROR 401 VIEW
+app.get('/urls_error_401', (req, res) => {
+  const userId = req.cookies.user_id;
+  const templateVars = {
+    user: users[userId]//change to null?
+  };
+  res.render('urls_error_401', templateVars);
 });
 
 
