@@ -95,7 +95,7 @@ app.post('/register', (req,res) => {
   const { email, password } = req.body;
   const database = users;
   const user = findUserByEmail(email, users);
-  
+
   if (email.length === 0 && password.length === 0) {
     res.status(411).redirect('/urls_error_411');
   } else if (!user) {
@@ -152,6 +152,7 @@ app.get('/urls', (req,res) => {
       user: users[userId],
       urls: findURLByUser(userId, database) //here we pass in filtered value
     };
+    
     res.render('urls_index', templateVars);
   }
 });
