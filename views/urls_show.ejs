@@ -14,21 +14,36 @@
   <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
-        <h5 class="card-title">TinyURL for: <%= longURL %></h5>
-        <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
+        <br>
+        <br>
+        <h4><p class="card-text">Short URL: <a href="/u/<%= shortURL %>">
+          <br>
+          <%= shortURL %></a></p></h4>
+          <br>
+        <h5 class="card-title">TinyURL for:
+          <br>
+           <%= longURL %></h5>
+        
       </div>
+      <br>
+      <br>
     
       
     <div class="card-footer text-muted">
-      <h2>Edit</h2>
+      <br>
+      <h5>Edit the destination of your Tiny URL</h5>
+      
+      Enter a new URL:
       <form class="form-inline" action="/urls/<%= shortURL %>" method="POST">
         <div class=col-sm-4></div>
       <div class="form-group mb-2">
-        <label for="longURL">Enter a URL:</label>
-        <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <label for="longURL"></label>
+        <input class="form-control" type="text" name="longURL" value="http://" style="width: 300px; margin: 1em">
+        <button type="submit" class="btn btn-primary">Update</button>
+    </div>
       </div>
     </form>
+    
   </div>
   </div>
   <!-- Bootstrap JS -->
