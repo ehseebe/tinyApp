@@ -52,10 +52,10 @@ app.get('/', (req, res) => {
 app.get('/urls', (req,res) => {
   const userId = req.session['user_id'];
   const database = urlDatabase;
+
   if (!userId) {
     res.redirect('/urls_error_401');
   } else {
-    console.log("urlDatabase:", urlDatabase);
     const templateVars = {
       user: users[userId],
       urls: findURLByUser(userId, database)
@@ -85,9 +85,9 @@ app.get('/urls/:shortURL', (req,res) => {
   const shortURL = req.params.shortURL;
   const userId = req.session['user_id'];
   
-  if (!userId) { 
+  if (!userId) {
     res.redirect('/urls');
-  } else { 
+  } else {
     const templateVars = {
       user: users[userId],
       shortURL,
@@ -104,7 +104,7 @@ app.get('/u/:shortURL', (req, res) => {
   const entry = urlDatabase[shortURL];
 
   if (entry) {
-    res.redirect(entry.longURL); 
+    res.redirect(entry.longURL);
   } else {
     res.status(404).redirect('/urls_error_404');
   }
@@ -119,16 +119,16 @@ app.post('/urls', (req, res) => {
   
   if (!userId) {
     res.redirect('/login');
-  } else if (longURL.length <= 7 ) {
+  } else if (longURL.length <= 7) {
     res.status(411).redirect('/urls_error_411');
   } else {
   
-  urlDatabase[shortURL] = {
-    longURL: req.body.longURL,
-    userID : req.session['user_id']
-  };
-  res.redirect(`/urls/${shortURL}`); 
-}
+    urlDatabase[shortURL] = {
+      longURL: req.body.longURL,
+      userID : req.session['user_id']
+    };
+    res.redirect(`/urls/${shortURL}`);
+  }
 });
 
 
@@ -152,6 +152,7 @@ app.post('/urls/:shortURL', (req, res) => {
 //DELETE URL
 app.post('/urls/:shortURL/delete', (req, res) => {
   const userId = req.session['user_id'];
+
   if (!userId) {
     res.redirect('/login');
   } else {
