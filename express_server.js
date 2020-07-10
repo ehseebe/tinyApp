@@ -1,5 +1,3 @@
-//const cookieParser = require('cookie-parser');
-//app.use(cookieParser());
 const { findUserByEmail, addNewUser, authenticateUser, generateRandomString, findURLByUser } = require('./helpers');
 const express = require('express');
 const app = express();
@@ -135,8 +133,8 @@ app.get('/urls_error_401', (req, res) => {
 //LOGOUT
 app.post('/logout', (req, res) => {
   //clear the cookies
-  req.session['user_id'] = null;
-  res.redirect('/urls');
+  req.session = null;
+  res.redirect('/login');
 });
 
 
@@ -145,7 +143,7 @@ app.get('/urls', (req,res) => {
   const userId = req.session['user_id'];
   const database = urlDatabase;
   if (!userId) {
-    res.redirect('/login');
+    res.redirect('/urls_error_401');
   } else {
     console.log("urlDatabase:", urlDatabase);
     const templateVars = {
@@ -175,12 +173,22 @@ app.get('/urls/new', (req,res) => {
 
 //ADD NEW URL TO DB + REDIRECT
 app.post('/urls', (req, res) => {
+  const userId = req.session['user_id'];
+  const longURL = req.body.longURL;
   const shortURL = generateRandomString();
+  
+  if (!userId) {
+    res.redirect('/login');
+  } else if (longURL.length === 0) {
+    res.status(411).redirect('/urls_error_411');
+  } else {
+  
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
     userID : req.session['user_id']
   };
   res.redirect(`/urls/${shortURL}`); //need to redirect to /urls/
+}
 });
 
 
@@ -189,15 +197,15 @@ app.get('/urls/:shortURL', (req,res) => {
   const shortURL = req.params.shortURL;
   const userId = req.session['user_id'];
   
-  if (urlDatabase[shortURL]) { //will check in the database, if it exists, we render the page as normal
+  if (!userId) { 
+    res.redirect('/urls');
+  } else { 
     const templateVars = {
       user: users[userId],
       shortURL,
       longURL: urlDatabase[shortURL].longURL
     };
     res.render('urls_show', templateVars);
-  } else { //if it doesn't, it comes back as undefined === falsy, and we want to redirect to main page
-    res.redirect('/urls');
   }
 });
 
@@ -227,10 +235,19 @@ app.get('/u/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const entry = urlDatabase[shortURL];
   if (entry) {
-    res.redirect(entry.longURL); //http needed!!! show error if http not
+    res.redirect(entry.longURL); 
   } else {
-    res.status(404).send('Error: url not found.');
+    res.status(404).redirect('/urls_error_404');
   }
+});
+
+//ERROR 404 VIEW
+app.get('/urls_error_404', (req, res) => {
+  const userId = req.session['user_id'];
+  const templateVars = {
+    user: users[userId]//change to null?
+  };
+  res.render('urls_error_404', templateVars);
 });
 
 
